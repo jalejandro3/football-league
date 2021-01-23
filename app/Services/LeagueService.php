@@ -7,6 +7,7 @@ use App\Exceptions\ApplicationException;
 use App\Exceptions\ResourceNotFoundException;
 use App\Models\Competition;
 use App\Models\League;
+use App\Models\Team;
 use App\Repositories\CompetitionRepositoryInterface;
 use App\Repositories\LeagueRepositoryInterface;
 use App\Repositories\PlayerRepositoryInterface;
@@ -110,18 +111,8 @@ final class LeagueService implements LeagueServiceInterface
 
                 if (!in_array($newTeam->id, get_competition_team_ids($newCompetition))) {
                     $teamResponse = $this->footballClient->exec("teams/{$team->id}", 'get');
-                    $players = $teamResponse->squad;
 
-                    foreach ($players as $player) {
-                        $this->playerRepository->create([
-                            'team_id' => $newTeam->id,
-                            'name' => $player->name,
-                            'position' => $player->position,
-                            'dateOfBirth' => $player->dateOfBirth,
-                            'countryOfBirth' => $player->countryOfBirth,
-                            'nationality' => $player->nationality
-                        ]);
-                    }
+                    $this->saveTeamPlayers($teamResponse, $newTeam);
                 }
             }
 
@@ -213,4 +204,21 @@ final class LeagueService implements LeagueServiceInterface
         }
     }
 
+    private function saveTeamPlayers($response, Team $team)
+    {
+        if ($response) {
+            $players = $response->squad;
+
+            foreach ($players as $player) {
+                $this->playerRepository->create([
+                    'team_id' => $team->id,
+                    'name' => $player->name,
+                    'position' => $player->position,
+                    'dateOfBirth' => $player->dateOfBirth,
+                    'countryOfBirth' => $player->countryOfBirth,
+                    'nationality' => $player->nationality
+                ]);
+            }
+        }
+    }
 }

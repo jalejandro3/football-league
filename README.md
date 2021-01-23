@@ -21,16 +21,17 @@ The second one is about to get the total amount of players belonging to all team
 **API endpoint**: `/total-players/{leagueCode}`
 
 ###Disclaimer
-*The project was developed using Laravel Framework, so, all the artisan command must be execute inside the project root folde.*
+- *The project was developed using Laravel Framework, so, all the artisan command must be execute inside the project root folde.*
+- *It was assumed the user will be get only the current league, for this app it was not applied any kind of filters.*
 
 ## How to install
 You will need to unzip the .rar file, inside you will find the project. In the root folder you will find the santex_league.sql file, you can use it to import the database structure, or, at the moment that the composer finish the installation this will run the commands to migrate all the tables structure and seed the league table with all the league codes availables in the TIER1 free account. I encourage to use the second one through the composer installation.
 
 Go inside the project
-`$ cd santex-league`
+`cd santex-league`
 
 Run composer install
-`$ composer install`
+`composer install`
 
 And that is all!.
 
@@ -44,7 +45,7 @@ The .env file must be created, inside it you can configure:
 ## How to use it
 When the project is already installed, you can serve it running:
 
-`$ php artisan serve`
+`php artisan serve`
 
 This command serve our application into the localhost.
 

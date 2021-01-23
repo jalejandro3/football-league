@@ -5,8 +5,6 @@ namespace App\Clients;
 use App\Exceptions\InputValidationException;
 use Exception;
 
-use Illuminate\Support\Facades\Log;
-
 /**
  * Class FootballClient.
  *   Client to access to all the Football League endpoints and get their responses.
@@ -16,24 +14,19 @@ use Illuminate\Support\Facades\Log;
 final class FootballClient extends Client implements FootballClientInterface
 {
     /**
-     * REQUEST RESET THRESHOLD
-     */
-    const REQUEST_RESET_THRESHOLD = 70;
-
-    /**
      * @inheritDoc
      */
     public function exec(string $request, string $requestType)
     {
-        $this->verifyRequestType($requestType);
-
-        $this->setHeaders(['X-Auth-Token' => env('FOOTBALL_LEAGUE_TOKEN')]);
-
-        $this->setBaseUrl(env('FOOTBALL_LEAGUE_BASE_URL'));
-
-        $this->setUrl($request);
-
         try {
+            $this->verifyRequestType($requestType);
+
+            $this->setHeaders(['X-Auth-Token' => env('FOOTBALL_LEAGUE_TOKEN')]);
+
+            $this->setBaseUrl(env('FOOTBALL_LEAGUE_BASE_URL'));
+
+            $this->setUrl($request);
+
             $response = $this->getClient()->request($requestType, $this->getUrl(), $this->getHeaders());
 
             $this->setResponseHeaders($response->getHeaders());
@@ -44,15 +37,12 @@ final class FootballClient extends Client implements FootballClientInterface
             //the process will sleep until we recover the maximum number of requests again, this will be in
             //X-RequestCounter-Reset seconds, taking back the last paused request.
             if ((int)$e->getCode() === 429) {
-                //I'm having some issues about the X-RequestCounter-Reset header value, for some reason, not matter if
-                //I use this value or a 60 seconds hardcore, I getting an 429 error 'Too many request', so I did this
-                //workaround using more seconds before to resume the requests.
-                sleep(self::REQUEST_RESET_THRESHOLD);
+                sleep((int)$this->getResponseHeaders()['X-RequestCounter-Reset'][0]);
 
                 $this->exec($request, $requestType);
+            } else {
+                throw new Exception($e->getMessage(), 504);
             }
-
-            throw new Exception($e->getMessage(), $e->getCode());
         }
     }
 
