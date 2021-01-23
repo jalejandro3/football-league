@@ -31,13 +31,10 @@ class LeagueController extends Controller
     }
 
     /**
-     * Import the given League to the database.
-     *
-     * @param string $leagueCode League code.
+     * @param string $leagueCode
      * @return JsonResponse
-     * @throws \App\Exceptions\InputValidationException
+     * @throws InputValidationException
      * @throws \App\Exceptions\ApplicationException
-     * @throws \App\Exceptions\ResourceNotFoundException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function import(string $leagueCode): JsonResponse

@@ -6,11 +6,7 @@ use App\Clients\FootballClientInterface;
 use App\Exceptions\ApplicationException;
 use App\Models\Competition;
 use App\Models\League;
-use App\Models\Team;
-use App\Repositories\CompetitionRepositoryInterface;
 use App\Repositories\LeagueRepositoryInterface;
-use App\Repositories\PlayerRepositoryInterface;
-use App\Repositories\TeamRepositoryInterface;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -23,9 +19,9 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 final class LeagueService implements LeagueServiceInterface
 {
     /**
-     * @var CompetitionRepositoryInterface
+     * @var CompetitionServiceInterface
      */
-    private CompetitionRepositoryInterface $competitionRepository;
+    private CompetitionServiceInterface $competitionService;
 
     /**
      * @var FootballClientInterface
@@ -38,37 +34,29 @@ final class LeagueService implements LeagueServiceInterface
     private LeagueRepositoryInterface $leagueRepository;
 
     /**
-     * @var PlayerRepositoryInterface
+     * @var TeamServiceInterface
      */
-    private PlayerRepositoryInterface $playerRepository;
-
-    /**
-     * @var TeamRepositoryInterface
-     */
-    private TeamRepositoryInterface $teamRepository;
+    private TeamServiceInterface $teamService;
 
     /**
      * LeagueService constructor.
      *
-     * @param CompetitionRepositoryInterface $competitionRepository
+     * @param CompetitionServiceInterface $competitionService
      * @param FootballClientInterface $footballClient
      * @param LeagueRepositoryInterface $leagueRepository
-     * @param PlayerRepositoryInterface $playerRepository
-     * @param TeamRepositoryInterface $teamRepository
+     * @param TeamServiceInterface $teamService
      */
     public function __construct(
-        CompetitionRepositoryInterface $competitionRepository,
+        CompetitionServiceInterface $competitionService,
         FootballClientInterface $footballClient,
         LeagueRepositoryInterface $leagueRepository,
-        PlayerRepositoryInterface $playerRepository,
-        TeamRepositoryInterface $teamRepository
+        TeamServiceInterface $teamService
     )
     {
-        $this->competitionRepository = $competitionRepository;
+        $this->competitionService = $competitionService;
         $this->footballClient = $footballClient;
         $this->leagueRepository = $leagueRepository;
-        $this->playerRepository = $playerRepository;
-        $this->teamRepository = $teamRepository;
+        $this->teamService = $teamService;
     }
 
     /**
@@ -82,41 +70,16 @@ final class LeagueService implements LeagueServiceInterface
 
         $this->isImported($league->status);
 
-        $teamIds = [];
-        $request = "competitions/{$leagueCode}/teams";
-        $response = $this->footballClient->exec($request, 'get');
+        $response = $this->footballClient->exec("competitions/{$leagueCode}/teams", 'get');
         $competition = $response->competition;
         $teams = $response->teams;
 
         DB::beginTransaction();
 
         try {
-            $newCompetition = $this->competitionRepository->create([
-                'name' => $competition->name,
-                'code' => $competition->code,
-                'areaName' => $competition->area->name
-            ]);
+            $newCompetition = $this->competitionService->saveCompetition($competition);
 
-            foreach ($teams as $team) {
-                $newTeam = $this->teamRepository->create([
-                    'competition_id' => $newCompetition->id,
-                    'name' => $team->name,
-                    'tla' => $team->tla,
-                    'shortName' => $team->shortName,
-                    'areaName' => $team->area->name,
-                    'email' => $team->email
-                ]);
-
-                array_push($teamIds, $newTeam->id);
-
-                if (!in_array($newTeam->id, get_competition_team_ids($newCompetition))) {
-                    $teamResponse = $this->footballClient->exec("teams/{$team->id}", 'get');
-
-                    $this->saveTeamPlayers($teamResponse, $newTeam);
-                }
-            }
-
-            $this->saveCompetitionTeamRelations($newCompetition, $teamIds);
+            $this->teamService->saveTeams($teams, $newCompetition);
 
             $this->leagueRepository->update($league->id, ['status' => League::STATUS_IMPORTED]);
 
@@ -128,23 +91,6 @@ final class LeagueService implements LeagueServiceInterface
         }
 
         return ["message" => "Successfully imported"];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTeamPlayerTotal(string $leagueCode): array
-    {
-        $this->invalidCompetitionCode($leagueCode);
-
-        $totalPlayer = 0;
-        $competition = $this->competitionRepository->findByLeagueCode($leagueCode);
-
-        foreach ($competition->teams()->get() as $team) {
-            $totalPlayer += $team->players()->count();
-        }
-
-        return ["total" => "<em><strong>$totalPlayer</strong></em>"];
     }
 
     /**
@@ -171,54 +117,6 @@ final class LeagueService implements LeagueServiceInterface
     {
         if (is_null($league)) {
             throw new ResourceNotFoundException('Not found', 404);
-        }
-    }
-
-    /**
-     * Validate if there is a competition with a valid league code associated.
-     *
-     * @param string $leagueCode League code.
-     * @throws ResourceNotFoundException
-     */
-    private function invalidCompetitionCode(string $leagueCode)
-    {
-        if (!$this->competitionRepository->findByLeagueCode($leagueCode)) {
-            throw new ResourceNotFoundException('Not found', 404);
-        }
-    }
-
-    /**
-     * Save competition-team relations for new team ids.
-     *
-     * @param Competition $competition Competition object.
-     * @param array $newTeamIds Array with new team ids.
-     */
-    private function saveCompetitionTeamRelations(Competition $competition, array $newTeamIds)
-    {
-        $nonExistingIds = array_diff($newTeamIds, get_competition_team_ids($competition));
-
-        sort($nonExistingIds);
-
-        if (count($nonExistingIds) > 0) {
-            $competition->teams()->syncWithoutDetaching($nonExistingIds);
-        }
-    }
-
-    private function saveTeamPlayers($response, Team $team)
-    {
-        if ($response) {
-            $players = $response->squad;
-
-            foreach ($players as $player) {
-                $this->playerRepository->create([
-                    'team_id' => $team->id,
-                    'name' => $player->name,
-                    'position' => $player->position,
-                    'dateOfBirth' => $player->dateOfBirth,
-                    'countryOfBirth' => $player->countryOfBirth,
-                    'nationality' => $player->nationality
-                ]);
-            }
         }
     }
 }
