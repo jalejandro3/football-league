@@ -2,6 +2,7 @@
 
 namespace App\Clients;
 
+use App\Exceptions\ClientException;
 use App\Exceptions\InputValidationException;
 use Exception;
 
@@ -41,7 +42,7 @@ final class FootballClient extends Client implements FootballClientInterface
 
                 $this->exec($request, $requestType);
             } else {
-                throw new Exception($e->getMessage(), 504);
+                throw new ClientException($e->getMessage(), 504);
             }
         }
     }

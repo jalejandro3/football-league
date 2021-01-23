@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Clients\FootballClientInterface;
 use App\Exceptions\ApplicationException;
-use App\Exceptions\ResourceNotFoundException;
 use App\Models\Competition;
 use App\Models\League;
 use App\Models\Team;
@@ -14,6 +13,7 @@ use App\Repositories\PlayerRepositoryInterface;
 use App\Repositories\TeamRepositoryInterface;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
  * Class LeagueService
@@ -170,7 +170,7 @@ final class LeagueService implements LeagueServiceInterface
     private function notExists(?League $league)
     {
         if (is_null($league)) {
-            throw new ResourceNotFoundException('Not found');
+            throw new ResourceNotFoundException('Not found', 404);
         }
     }
 
@@ -183,7 +183,7 @@ final class LeagueService implements LeagueServiceInterface
     private function invalidCompetitionCode(string $leagueCode)
     {
         if (!$this->competitionRepository->findByLeagueCode($leagueCode)) {
-            throw new ResourceNotFoundException('Not found');
+            throw new ResourceNotFoundException('Not found', 404);
         }
     }
 
