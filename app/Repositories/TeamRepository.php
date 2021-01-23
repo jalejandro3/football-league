@@ -3,11 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\Team;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class TeamRepository.
- *   All the method implementations for the TeamRepositoryInterface.
  *
  * @package App\Repositories
  */
@@ -31,32 +29,8 @@ final class TeamRepository implements TeamRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function all(): Collection
-    {
-        return $this->team->all();
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function create(array $data): Team
     {
         return $this->team->create($data);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function delete(int $id): bool
-    {
-        return $this->team->destroy($id);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function update(int $id, array $data): bool
-    {
-        return $this->team->whereId($id)->update($data);
     }
 }

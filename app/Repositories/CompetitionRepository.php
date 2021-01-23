@@ -3,8 +3,12 @@
 namespace App\Repositories;
 
 use App\Models\Competition;
-use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * Class CompetitionRepository
+ *
+ * @package App\Repositories
+ */
 final class CompetitionRepository implements CompetitionRepositoryInterface
 {
     /**
@@ -25,25 +29,9 @@ final class CompetitionRepository implements CompetitionRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function all(): Collection
-    {
-        return $this->competition->all();
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function create(array $data): Competition
     {
         return $this->competition->create($data);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function update(array $data, int $id): bool
-    {
-        return $this->competition->whereId($id)->update($data);
     }
 
     /**

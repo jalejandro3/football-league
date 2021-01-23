@@ -5,6 +5,11 @@ namespace App\Clients;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 
+/**
+ * Interface FootballClientInterface
+ *
+ * @package App\Clients
+ */
 interface FootballClientInterface
 {
     /**

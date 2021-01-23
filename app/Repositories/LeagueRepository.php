@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\League;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class LeagueRepository
@@ -25,14 +24,6 @@ final class LeagueRepository implements LeagueRepositoryInterface
     public function __construct(League $league)
     {
         $this->league = $league;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function all(): Collection
-    {
-        return $this->league->all();
     }
 
     /**

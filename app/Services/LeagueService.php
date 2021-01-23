@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Clients\FootballClientInterface;
 use App\Exceptions\ApplicationException;
-use App\Models\Competition;
 use App\Models\League;
 use App\Repositories\LeagueRepositoryInterface;
 use Exception;

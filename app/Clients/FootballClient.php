@@ -8,7 +8,6 @@ use Exception;
 
 /**
  * Class FootballClient.
- *   Client to access to all the Football League endpoints and get their responses.
  *
  * @package App\Clients
  */

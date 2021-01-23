@@ -5,6 +5,11 @@ namespace App\Services;
 use App\Models\Team;
 use App\Repositories\PlayerRepositoryInterface;
 
+/**
+ * Class PlayerService
+ *
+ * @package App\Services
+ */
 final class PlayerService implements PlayerServiceInterface
 {
     /**

@@ -7,6 +7,11 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
+/**
+ * Interface LeagueServiceInterface
+ *
+ * @package App\Services
+ */
 interface LeagueServiceInterface
 {
     /**
@@ -20,13 +25,4 @@ interface LeagueServiceInterface
      * @throws ResourceNotFoundException
      */
     public function importLeagueDataToDatabase(string $leagueCode): array;
-
-//    /**
-//     * Get all the team players in a competition by league.
-//     *
-//     * @param string $leagueCode League Code.
-//     * @return array
-//     * @throws ResourceNotFoundException
-//     */
-//    public function getTeamPlayerTotal(string $leagueCode): array;
 }

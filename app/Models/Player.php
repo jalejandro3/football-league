@@ -5,6 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Player
+ *
+ * @package App\Models
+ */
 class Player extends Model
 {
     use HasFactory;

@@ -6,6 +6,11 @@ use App\Models\Competition;
 use App\Repositories\CompetitionRepositoryInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
+/**
+ * Class CompetitionService
+
+ * @package App\Services
+ */
 final class CompetitionService implements CompetitionServiceInterface
 {
     /**

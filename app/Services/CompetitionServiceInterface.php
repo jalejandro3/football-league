@@ -5,6 +5,11 @@ namespace App\Services;
 use App\Models\Competition;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
+/**
+ * Interface CompetitionServiceInterface
+ *
+ * @package App\Services
+ */
 interface CompetitionServiceInterface
 {
     /**

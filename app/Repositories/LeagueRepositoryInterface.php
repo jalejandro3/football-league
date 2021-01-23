@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\League;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Interface LeagueRepositoryInterface.
@@ -12,13 +11,6 @@ use Illuminate\Database\Eloquent\Collection;
  */
 interface LeagueRepositoryInterface
 {
-    /**
-     * Return all the leagues for the TIER1.
-     *
-     * @return Collection
-     */
-    public function all(): Collection;
-
     /**
      * Update a league.
      *
@@ -29,9 +21,10 @@ interface LeagueRepositoryInterface
     public function update(int $id, array $data): bool;
 
     /**
-     * Return a league record by its code.
+     * Find a league record by its code.
      *
-     * @return League
+     * @param string $code League code.
+     * @return League|null
      */
     public function findByCode(string $code): ?League;
 }

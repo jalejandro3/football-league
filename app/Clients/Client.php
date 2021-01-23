@@ -5,6 +5,11 @@ namespace App\Clients;
 use Exception;
 use GuzzleHttp;
 
+/**
+ * Class Client
+ *
+ * @package App\Clients
+ */
 abstract class Client
 {
     /**

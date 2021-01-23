@@ -7,8 +7,10 @@ use App\Models\Team;
 interface PlayerServiceInterface
 {
     /**
-     * @param $players
-     * @param Team $team
+     * Save a the players of a team.
+     *
+     * @param array $players Team players.
+     * @param Team $team Team object.
      */
-    public function savePlayers($players, Team $team);
+    public function savePlayers(array $players, Team $team);
 }
