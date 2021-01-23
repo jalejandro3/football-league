@@ -15,11 +15,11 @@ class Controller extends BaseController
     /**
      * Success json response body.
      *
-     * @param string $msg
+     * @param array $msg
      * @return JsonResponse
      */
-    public function success(string $msg): JsonResponse
+    public function success(array $msg): JsonResponse
     {
-        return response()->json(['message' => $msg]);
+        return response()->json($msg, 200, [], JSON_UNESCAPED_SLASHES);
     }
 }

@@ -37,10 +37,10 @@ interface CompetitionRepositoryInterface
     public function update(array $data, int $id): bool;
 
     /**
-     * Delete a competition
+     * Return a competition by league code.
      *
-     * @param int $id Competition id
-     * @return bool
+     * @param string $leagueCode League code.
+     * @return Competition|null
      */
-    public function delete(int $id): bool;
+    public function findByLeagueCode(string $leagueCode): ?Competition;
 }

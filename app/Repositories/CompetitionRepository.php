@@ -35,15 +35,7 @@ final class CompetitionRepository implements CompetitionRepositoryInterface
      */
     public function create(array $data): Competition
     {
-        $this->competition->create($data);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function delete(int $id): bool
-    {
-        $this->competition->destroy($id);
+        return $this->competition->create($data);
     }
 
     /**
@@ -52,5 +44,13 @@ final class CompetitionRepository implements CompetitionRepositoryInterface
     public function update(array $data, int $id): bool
     {
         return $this->competition->whereId($id)->update($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findByLeagueCode(string $leagueCode): ?Competition
+    {
+        return $this->competition->whereCode($leagueCode)->first();
     }
 }

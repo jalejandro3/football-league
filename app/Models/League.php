@@ -5,14 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Competition extends Model
+class League extends Model
 {
     use HasFactory;
 
     /**
+     * STATUS IMPORTED
+     */
+    const STATUS_IMPORTED = 'imported';
+
+    /**
+     * STATUS NOT IMPORTED
+     */
+    const STATUS_NOT_IMPORTED = 'not imported';
+
+    /**
      * @var array
      */
-    protected $fillable = ['name', 'code', 'areaName'];
+    protected $fillable = ['code', 'status'];
 
     /**
      * The attributes that should be cast to native types.
@@ -23,14 +33,4 @@ class Competition extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
-
-    /**
-     * A competition belongs to many teams.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function teams()
-    {
-        return $this->belongsToMany(Team::class);
-    }
 }

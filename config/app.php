@@ -179,6 +179,7 @@ return [
          * Custom Application Service Providers...
          */
         App\Providers\ClientServiceProvider::class,
+        App\Providers\HelperProvider::class,
         App\Providers\RepositoryServiceProvider::class,
         App\Providers\ServiceServiceProvider::class,
 

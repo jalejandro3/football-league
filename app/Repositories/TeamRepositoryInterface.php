@@ -30,17 +30,9 @@ interface TeamRepositoryInterface
     /**
      * Update a team
      *
+     * @param int $id Team id
      * @param array $data
-     * @param int $id Team id
      * @return bool
      */
-    public function update(array $data, int $id): bool;
-
-    /**
-     * Delete a team
-     *
-     * @param int $id Team id
-     * @return bool
-     */
-    public function delete(int $id): bool;
+    public function update(int $id, array $data): bool;
 }

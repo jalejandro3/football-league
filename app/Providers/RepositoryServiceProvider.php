@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\CompetitionRepository;
 use App\Repositories\CompetitionRepositoryInterface;
-use App\Repositories\ImporterRepository;
-use App\Repositories\ImporterRepositoryInterface;
+use App\Repositories\LeagueRepository;
+use App\Repositories\LeagueRepositoryInterface;
 use App\Repositories\PlayerRepository;
 use App\Repositories\PlayerRepositoryInterface;
 use App\Repositories\TeamRepository;
@@ -22,7 +22,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(CompetitionRepositoryInterface::class, CompetitionRepository::class);
-        $this->app->singleton(ImporterRepositoryInterface::class, ImporterRepository::class);
+        $this->app->singleton(LeagueRepositoryInterface::class, LeagueRepository::class);
         $this->app->singleton(PlayerRepositoryInterface::class, PlayerRepository::class);
         $this->app->singleton(TeamRepositoryInterface::class, TeamRepository::class);
     }

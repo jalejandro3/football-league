@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Services\CompetitionService;
 use App\Services\CompetitionServiceInterface;
-use App\Services\ImporterService;
-use App\Services\ImporterServiceInterface;
+use App\Services\LeagueService;
+use App\Services\LeagueServiceInterface;
 use App\Services\PlayerService;
 use App\Services\PlayerServiceInterface;
 use App\Services\TeamService;
@@ -22,7 +22,7 @@ class ServiceServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(CompetitionServiceInterface::class, CompetitionService::class);
-        $this->app->singleton(ImporterServiceInterface::class, ImporterService::class);
+        $this->app->singleton(LeagueServiceInterface::class, LeagueService::class);
         $this->app->singleton(PlayerServiceInterface::class, PlayerService::class);
         $this->app->singleton(TeamServiceInterface::class, TeamService::class);
     }

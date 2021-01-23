@@ -79,7 +79,9 @@ abstract class Client
      */
     public function setHeaders(array $headerOptions)
     {
-        $this->headers[] = $headerOptions;
+        $this->headers = [
+            'headers' => $headerOptions
+        ];
     }
 
     /**

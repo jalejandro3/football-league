@@ -4,23 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Player extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     /**
      * @var array
      */
-    protected $fillable = ['name', 'position', 'dateOfBirth', 'countryOfBirth', 'nationality'];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = ['deleted_at'];
+    protected $fillable = ['team_id', 'name', 'position', 'dateOfBirth', 'countryOfBirth', 'nationality'];
 
     /**
      * The attributes that should be cast to native types.
@@ -29,8 +21,7 @@ class Player extends Model
      */
     protected $casts = [
         'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime'
+        'updated_at' => 'datetime'
     ];
 
     /**

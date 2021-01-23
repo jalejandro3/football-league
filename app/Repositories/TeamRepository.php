@@ -41,7 +41,7 @@ final class TeamRepository implements TeamRepositoryInterface
      */
     public function create(array $data): Team
     {
-        $this->team->create($data);
+        return $this->team->create($data);
     }
 
     /**
@@ -49,13 +49,13 @@ final class TeamRepository implements TeamRepositoryInterface
      */
     public function delete(int $id): bool
     {
-        $this->team->destroy($id);
+        return $this->team->destroy($id);
     }
 
     /**
      * @inheritDoc
      */
-    public function update(array $data, int $id): bool
+    public function update(int $id, array $data): bool
     {
         return $this->team->whereId($id)->update($data);
     }

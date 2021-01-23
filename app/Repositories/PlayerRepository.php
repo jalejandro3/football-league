@@ -41,7 +41,7 @@ final class PlayerRepository implements PlayerRepositoryInterface
      */
     public function create(array $data): Player
     {
-        $this->player->create($data);
+        return $this->player->create($data);
     }
 
     /**
@@ -49,7 +49,7 @@ final class PlayerRepository implements PlayerRepositoryInterface
      */
     public function delete(int $id): bool
     {
-        $this->player->destroy($id);
+        return $this->player->destroy($id);
     }
 
     /**
