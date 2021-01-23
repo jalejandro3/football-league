@@ -1,63 +1,82 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# SANTEX League Exercise
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+##Requirements
+- "php": "^7.3|^8.0"
+- "guzzlehttp/guzzle": "^7.0.1"
 
-## About Laravel
+## Introduction
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+It was develop two APIs, the first one is use to get all the league information: competition, teams and players from https://www.football-data.org to save it into a database with the next structure:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Competition**: name, code, areaName.
+2. **League**: code, status. Status will be a field where the application verify is the league is already imported or not.
+3. **Player**: team_id, name, position, dateOfBirth, countryOfBirth, nationality.
+4. **Team**: name, tla, shortName, areaName, email.
+5. **CompetitionTeam**: competition_id, team_id. A middle table, many to many to save the relation a competition has many teams and many teams can participate in many competitions.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**API endpoint**: `/import-league/{leagueCode}`
 
-## Learning Laravel
+The second one is about to get the total amount of players belonging to all teams that participate in the given league.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**API endpoint**: `/total-players/{leagueCode}`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+###Disclaimer
+*The project was developed using Laravel Framework, so, all the artisan command must be execute inside the project root folde.*
 
-## Laravel Sponsors
+## How to install
+You will need to unzip the .rar file, inside you will find the project. In the root folder you will find the santex_league.sql file, you can use it to import the database structure, or, at the moment that the composer finish the installation this will run the commands to migrate all the tables structure and seed the league table with all the league codes availables in the TIER1 free account. I encourage to use the second one through the composer installation.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Go inside the project
+`$ cd santex-league`
 
-### Premium Partners
+Run composer install
+`$ composer install`
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/)**
-- **[OP.GG](https://op.gg)**
+And that is all!.
 
-## Contributing
+## Configuration
+The .env file must be created, inside it you can configure:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**FOOTBALL LEAGUE VARIABLES**
+- FOOTBALL_LEAGUE_BASE_URL: The api base url (http://api.football-data.org/v2/).
+- FOOTBALL_LEAGUE_TOKEN: Your API Football Data user token.
 
-## Code of Conduct
+## How to use it
+When the project is already installed, you can serve it running:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+`$ php artisan serve`
 
-## Security Vulnerabilities
+This command serve our application into the localhost.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+`Starting Laravel development server: http://127.0.0.1:8000`
 
-## License
+## About the development
+The application was thinking to use:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# football-league
+1. Client:
+    - FootballClient: A custom client with a exec method that receive the endpoint and the request type.
+2. Services:
+    - LeagueService: A service with the logic to import and calculate the total amount of players.
+3. Repositories: A layer with all the logic to manipulate the data into the database.
+    - CompetitionRepository
+    - LeagueRepository
+    - PlayerRepository
+    - TeamRepository
+4. Helpers:
+    - LeagueHelper: A helper that contains a global method to get the ids from the **competition_team** middle table.
+5. Providers: The providers to configure all the custom services, repositories and helpers used into the app:
+    - ClientServiceProvider
+    - HelperServiceProvider
+    - RepositoryServiceProvider
+    - ServiceServiceProvider
+6. Custom Exceptions: You can find a custom exceptions into the Exception folder:
+    - ApplicationException: Used to throws all the 409 code.
+        - Application Exception Messages:
+            - 409: League already imported
+    - InputValidationException: Used to throws invalid inputs.
+        - Input Validation Exception Messages:
+            - League Code must be uppercase.
+            - Request Type is required.
+    - ResourceNotFound: Used to throws 404 error
+        - Resource Not Found Exception Messages:
+            - Not found: League not found in league table, competition not found with a league code associated.

@@ -39,6 +39,7 @@ abstract class Client
     {
         $this->client = new GuzzleHttp\Client(['verify' => false]);
         $this->headers = [];
+        $this->responseHeaders = [];
     }
 
     /**

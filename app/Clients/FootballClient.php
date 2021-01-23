@@ -3,6 +3,9 @@
 namespace App\Clients;
 
 use App\Exceptions\InputValidationException;
+use Exception;
+
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class FootballClient.
@@ -12,7 +15,10 @@ use App\Exceptions\InputValidationException;
  */
 final class FootballClient extends Client implements FootballClientInterface
 {
-    const REQUEST_RESET_TRESHOLD = 70;
+    /**
+     * REQUEST RESET THRESHOLD
+     */
+    const REQUEST_RESET_THRESHOLD = 70;
 
     /**
      * @inheritDoc
@@ -21,30 +27,33 @@ final class FootballClient extends Client implements FootballClientInterface
     {
         $this->verifyRequestType($requestType);
 
-        $this->setHeaders([
-            'X-Auth-Token' => env('FOOTBALL_LEAGUE_TOKEN')
-        ]);
+        $this->setHeaders(['X-Auth-Token' => env('FOOTBALL_LEAGUE_TOKEN')]);
 
         $this->setBaseUrl(env('FOOTBALL_LEAGUE_BASE_URL'));
 
         $this->setUrl($request);
 
-        $response = $this->getClient()->request($requestType, $this->getUrl(), $this->getHeaders());
-        $this->setResponseHeaders($response->getHeaders());
+        try {
+            $response = $this->getClient()->request($requestType, $this->getUrl(), $this->getHeaders());
 
-        //The client validate if the request counter is zero
-        //then, the process will be sleep until we recover the time to reset the maximum number of requests again,
-        //this will be in 60 seconds, taking back the last paused request.
-        if ((int)$this->getResponseHeaders()['X-Requests-Available-Minute'][0] === 0) {
-            //I'm having some issues about the X-RequestCounter-Reset header value, for some reason, not matter if
-            //I use this value or a 60 seconds hardcore, I getting an 429 error 'Too many request', so I did this
-            //workaround using more seconds before to resume the requests.
-            usleep(self::REQUEST_RESET_TRESHOLD * 1000000);
+            $this->setResponseHeaders($response->getHeaders());
 
-            $this->exec($request, $requestType);
+            return json_decode($response->getBody()->getContents());
+        } catch (Exception $e) {
+            //The client throws an exception about the remaining request number is zero (error code: 429), then
+            //the process will sleep until we recover the maximum number of requests again, this will be in
+            //X-RequestCounter-Reset seconds, taking back the last paused request.
+            if ((int)$e->getCode() === 429) {
+                //I'm having some issues about the X-RequestCounter-Reset header value, for some reason, not matter if
+                //I use this value or a 60 seconds hardcore, I getting an 429 error 'Too many request', so I did this
+                //workaround using more seconds before to resume the requests.
+                sleep(self::REQUEST_RESET_THRESHOLD);
+
+                $this->exec($request, $requestType);
+            }
+
+            throw new Exception($e->getMessage(), $e->getCode());
         }
-
-        return json_decode($response->getBody()->getContents());
     }
 
     /**
