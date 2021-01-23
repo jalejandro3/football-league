@@ -133,7 +133,7 @@ final class LeagueService implements LeagueServiceInterface
         } catch (Exception $e) {
             DB::rollBack();
 
-            throw new Exception($e->getMessage());
+            throw new Exception($e->getMessage(), 504);
         }
 
         return ["message" => "Successfully imported"];
