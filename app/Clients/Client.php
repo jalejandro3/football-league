@@ -23,6 +23,11 @@ abstract class Client
     private array $headers;
 
     /**
+     * @var array
+     */
+    private array $responseHeaders;
+
+    /**
      * @var null|string
      */
     private ?string $url;
@@ -67,13 +72,18 @@ abstract class Client
         return $this->client;
     }
 
+    /**
+     * Get the request headers.
+     *
+     * @return array
+     */
     public function getHeaders(): array
     {
         return $this->headers;
     }
 
     /**
-     * Set the client headers
+     * Set the client headers.
      *
      * @param array $headerOptions
      */
@@ -82,6 +92,26 @@ abstract class Client
         $this->headers = [
             'headers' => $headerOptions
         ];
+    }
+
+    /**
+     * Get the response headers
+     *
+     * @return array
+     */
+    public function getResponseHeaders(): array
+    {
+        return $this->responseHeaders;
+    }
+
+    /**
+     * Set the response headers.
+     *
+     * @param array $headers
+     */
+    public function setResponseHeaders(array $headers)
+    {
+        $this->responseHeaders = $headers;
     }
 
     /**

@@ -12,7 +12,7 @@ use App\Exceptions\InputValidationException;
  */
 final class FootballClient extends Client implements FootballClientInterface
 {
-    const REQUEST_RESET_TRESHOLD = 60;
+    const REQUEST_RESET_TRESHOLD = 70;
 
     /**
      * @inheritDoc
@@ -30,13 +30,16 @@ final class FootballClient extends Client implements FootballClientInterface
         $this->setUrl($request);
 
         $response = $this->getClient()->request($requestType, $this->getUrl(), $this->getHeaders());
-        $responseHeaders = $response->getHeaders();
+        $this->setResponseHeaders($response->getHeaders());
 
         //The client validate if the request counter is zero
         //then, the process will be sleep until we recover the time to reset the maximum number of requests again,
         //this will be in 60 seconds, taking back the last paused request.
-        if ((int)$responseHeaders['X-Requests-Available-Minute'][0] === 1) {
-            usleep((int)$responseHeaders['X-RequestCounter-Reset'][0] * 1000000);
+        if ((int)$this->getResponseHeaders()['X-Requests-Available-Minute'][0] === 0) {
+            //I'm having some issues about the X-RequestCounter-Reset header value, for some reason, not matter if
+            //I use this value or a 60 seconds hardcore, I getting an 429 error 'Too many request', so I did this
+            //workaround using more seconds before to resume the requests.
+            usleep(self::REQUEST_RESET_TRESHOLD * 1000000);
 
             $this->exec($request, $requestType);
         }
